@@ -7,8 +7,8 @@
 
 const API_URL = process.env.VITE_API_URL || 'https://simanja2.ukwms.ac.id/api';
 
-const userid = process.argv[2] || '003130771';
-const password = process.argv[3] || 'Ukwms_2026';
+const userid = process.argv[2] || 'username';
+const password = process.argv[3] || 'Password';
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(`FAIL: ${message}`);
