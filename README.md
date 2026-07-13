@@ -3,8 +3,7 @@
 Frontend Kuesioner for Tendik and Dosen to vote service in Widya Mandala Catholic University.
 
 A standalone React + TypeScript SPA (Vite) that lets Dosen/Tendik log in and fill out the periodic
-evaluation questionnaire against the Simanja2 Laravel Sanctum API. See
-[.ai/frontend/prd_kuesioner_frontend.md](.ai/frontend/prd_kuesioner_frontend.md) for the full spec.
+evaluation questionnaire against the Simanja2 Laravel Sanctum API.
 
 ## Stack
 
