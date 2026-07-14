@@ -25,6 +25,23 @@ const kuesionerData: KuesionerData = {
   ],
 };
 
+const multiKelompokData: KuesionerData = {
+  is_sudah_mengisi: false,
+  periode: { kdperiode: '2026-1', is_aktif: 1 },
+  kuesioner: [
+    {
+      kdkelompok: 'K1',
+      namakelompok: 'Kelompok Layanan',
+      pertanyaan: [{ idpertanyaan: 1, pertanyaan: 'Layanan cepat?', jenisjwb: 'A', kunci: '' }],
+    },
+    {
+      kdkelompok: 'K2',
+      namakelompok: 'Kelompok Fasilitas',
+      pertanyaan: [{ idpertanyaan: 2, pertanyaan: 'Fasilitas memadai?', jenisjwb: 'A', kunci: '' }],
+    },
+  ],
+};
+
 const fakeUser = { userid: '12345', nama: 'Budi', role: 'dosen' };
 
 const mockGetByUrl = (kuesionerResponse: KuesionerData) =>
@@ -64,7 +81,7 @@ describe('KuesionerPage - mengirim jawaban ke backend', () => {
 
     expect(await screen.findByText('Layanan cepat?', { exact: false })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'S' }));
+    await user.click(screen.getByRole('button', { name: 'Setuju' }));
     await user.click(screen.getByRole('button', { name: 'Benar' }));
     await user.type(screen.getByPlaceholderText('Ketik jawaban Anda di sini...'), 'Lebih cepat lagi ya');
 
@@ -90,7 +107,7 @@ describe('KuesionerPage - mengirim jawaban ke backend', () => {
 
     expect(await screen.findByText('Layanan cepat?', { exact: false })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'S' }));
+    await user.click(screen.getByRole('button', { name: 'Setuju' }));
 
     const submitButton = screen.getByRole('button', { name: /kirim semua jawaban/i });
     expect(submitButton).toBeDisabled();
@@ -108,6 +125,40 @@ describe('KuesionerPage - mengirim jawaban ke backend', () => {
     expect(await screen.findByRole('heading', { name: /terima kasih/i })).toBeInTheDocument();
     expect(screen.queryByText('Layanan cepat?', { exact: false })).not.toBeInTheDocument();
     expect(postSpy).not.toHaveBeenCalled();
+  });
+
+  it('menampilkan satu kategori per langkah dan hanya mengirim setelah kategori terakhir dilanjutkan', async () => {
+    mockGetByUrl(multiKelompokData);
+    const postSpy = vi.spyOn(apiClient, 'post').mockResolvedValueOnce({ data: { success: true } });
+
+    const user = userEvent.setup();
+    renderKuesionerPage();
+
+    expect(await screen.findByText('Layanan cepat?', { exact: false })).toBeInTheDocument();
+    expect(screen.queryByText('Fasilitas memadai?', { exact: false })).not.toBeInTheDocument();
+
+    const nextButton = screen.getByRole('button', { name: /lanjut/i });
+    expect(nextButton).toBeDisabled();
+    expect(screen.queryByRole('button', { name: /kirim semua jawaban/i })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Setuju' }));
+    expect(nextButton).toBeEnabled();
+    await user.click(nextButton);
+
+    expect(await screen.findByText('Fasilitas memadai?', { exact: false })).toBeInTheDocument();
+    expect(screen.queryByText('Layanan cepat?', { exact: false })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Setuju' }));
+    await user.click(screen.getByRole('button', { name: /kirim semua jawaban/i }));
+
+    await waitFor(() => expect(postSpy).toHaveBeenCalledTimes(1));
+    expect(postSpy).toHaveBeenCalledWith('/kuesioner/jawaban', {
+      kdperiode: '2026-1',
+      jawaban: [
+        { idpertanyaan: 1, jenisjwb: 'A', kdkelompok: 'K1', jawaban: 'S' },
+        { idpertanyaan: 2, jenisjwb: 'A', kdkelompok: 'K2', jawaban: 'S' },
+      ],
+    });
   });
 
   afterEach(() => {

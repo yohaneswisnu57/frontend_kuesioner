@@ -12,6 +12,7 @@ export const KuesionerPage = () => {
   const logout = useLogout();
   const [jawabanState, setJawabanState] = useState<Record<number, string | number>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   if (logout.isPending || logout.isSuccess) {
     return (
@@ -79,13 +80,35 @@ export const KuesionerPage = () => {
   const progressPersen = totalSoal > 0 ? Math.round((totalDijawab / totalSoal) * 100) : 0;
   const isFormValid = totalDijawab === totalSoal && totalSoal > 0;
 
+  const currentKelompok = kelompokList[currentStep];
+  const isLastStep = currentStep === kelompokList.length - 1;
+  const isCurrentStepValid = currentKelompok
+    ? currentKelompok.pertanyaan.every((soal) => {
+        const jawaban = jawabanState[soal.idpertanyaan];
+        return jawaban !== undefined && jawaban !== '';
+      })
+    : false;
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const handleNext = () => {
+    if (!isCurrentStepValid) return;
+    setCurrentStep((step) => Math.min(step + 1, kelompokList.length - 1));
+    scrollToTop();
+  };
+
+  const handleBack = () => {
+    setCurrentStep((step) => Math.max(step - 1, 0));
+    scrollToTop();
+  };
+
   const handlePilihJawaban = (idpertanyaan: number, value: string | number) => {
     setJawabanState((prev) => ({ ...prev, [idpertanyaan]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid || mutation.isPending) return;
+    if (!isLastStep || !isFormValid || mutation.isPending) return;
 
     const jawabanPayload: JawabanPayload[] = allPertanyaan.map((p) => {
       const parentKelompok = kelompokList.find((k) =>
@@ -131,7 +154,9 @@ export const KuesionerPage = () => {
 
         <div className="sticky top-4 z-40 mb-8 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-2xl backdrop-blur-lg dark:border-white/10 dark:bg-slate-900/80">
           <div className="mb-1 flex justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
-            <span>Progres Pengisian</span>
+            <span>
+              Kategori {currentStep + 1} dari {kelompokList.length}
+            </span>
             <span>
               {totalDijawab} dari {totalSoal} Soal Terjawab ({progressPersen}%)
             </span>
@@ -144,40 +169,46 @@ export const KuesionerPage = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-10">
-          {kelompokList.map((kelompok) => (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {currentKelompok && (
             <section
-              key={kelompok.kdkelompok}
+              key={currentKelompok.kdkelompok}
               className="animate-fade-in space-y-6 rounded-3xl border border-slate-200 bg-white/70 p-6 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-white/5 md:p-8"
             >
               <h2 className="flex items-center border-b border-slate-200 pb-3 text-xl font-bold text-slate-700 dark:border-white/10 dark:text-slate-200">
                 <span className="mr-3 h-6 w-1.5 rounded-full bg-indigo-500" />
-                {kelompok.namakelompok}
+                {currentKelompok.namakelompok}
               </h2>
 
               <div className="space-y-8 divide-y divide-slate-200 dark:divide-white/10">
-                {kelompok.pertanyaan.map((soal, index) => (
+                {currentKelompok.pertanyaan.map((soal, index) => (
                   <div key={soal.idpertanyaan} className={`space-y-3 pt-6 ${index === 0 ? 'pt-0' : ''}`}>
                     <p className="font-medium leading-relaxed text-slate-600 dark:text-slate-300">
                       {index + 1}. {soal.pertanyaan}
                     </p>
 
                     {soal.jenisjwb === 'A' && (
-                      <div className="grid max-w-lg grid-cols-5 gap-2">
-                        {['STS', 'TS', 'N', 'S', 'SS'].map((opsi) => {
-                          const isSelected = jawabanState[soal.idpertanyaan] === opsi;
+                      <div className="grid max-w-xl grid-cols-1 gap-2 sm:grid-cols-5">
+                        {[
+                          { value: 'STS', label: 'Sangat Tidak Setuju' },
+                          { value: 'TS', label: 'Tidak Setuju' },
+                          { value: 'N', label: 'Netral' },
+                          { value: 'S', label: 'Setuju' },
+                          { value: 'SS', label: 'Sangat Setuju' },
+                        ].map(({ value, label }) => {
+                          const isSelected = jawabanState[soal.idpertanyaan] === value;
                           return (
                             <button
-                              key={opsi}
+                              key={value}
                               type="button"
-                              onClick={() => handlePilihJawaban(soal.idpertanyaan, opsi)}
-                              className={`min-h-[44px] rounded-xl border px-3 py-2 text-xs font-semibold tracking-wider transition-all duration-200 ${
+                              onClick={() => handlePilihJawaban(soal.idpertanyaan, value)}
+                              className={`min-h-[44px] rounded-xl border px-3 py-2 text-center text-xs font-semibold leading-snug transition-all duration-200 ${
                                 isSelected
                                   ? 'border-indigo-500 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
                                   : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-400 dark:hover:border-white/20 dark:hover:text-slate-300'
                               }`}
                             >
-                              {opsi}
+                              {label}
                             </button>
                           );
                         })}
@@ -222,27 +253,53 @@ export const KuesionerPage = () => {
                 ))}
               </div>
             </section>
-          ))}
+          )}
 
-          <div className="flex justify-end pt-4">
+          <div className="flex items-center justify-between gap-3 pt-4">
             <button
-              type="submit"
-              disabled={!isFormValid || mutation.isPending}
-              className={`flex min-h-[44px] items-center rounded-2xl px-8 py-3 font-bold tracking-wide shadow-xl transition-all duration-300 ${
-                isFormValid && !mutation.isPending
-                  ? 'cursor-pointer bg-gradient-to-r from-indigo-500 to-cyan-500 text-white hover:scale-[1.02] hover:opacity-90'
-                  : 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-slate-800 dark:text-slate-500'
+              type="button"
+              onClick={handleBack}
+              disabled={currentStep === 0}
+              className={`min-h-[44px] rounded-xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5 ${
+                currentStep === 0 ? 'invisible' : ''
               }`}
             >
-              {mutation.isPending ? (
-                <>
-                  <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-slate-500 border-t-transparent" />
-                  Menyimpan...
-                </>
-              ) : (
-                'Kirim Semua Jawaban'
-              )}
+              Kembali
             </button>
+
+            {isLastStep ? (
+              <button
+                type="submit"
+                disabled={!isFormValid || mutation.isPending}
+                className={`flex min-h-[44px] items-center rounded-2xl px-8 py-3 font-bold tracking-wide shadow-xl transition-all duration-300 ${
+                  isFormValid && !mutation.isPending
+                    ? 'cursor-pointer bg-gradient-to-r from-indigo-500 to-cyan-500 text-white hover:scale-[1.02] hover:opacity-90'
+                    : 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-slate-800 dark:text-slate-500'
+                }`}
+              >
+                {mutation.isPending ? (
+                  <>
+                    <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-slate-500 border-t-transparent" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  'Kirim Semua Jawaban'
+                )}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={!isCurrentStepValid}
+                className={`flex min-h-[44px] items-center rounded-2xl px-8 py-3 font-bold tracking-wide shadow-xl transition-all duration-300 ${
+                  isCurrentStepValid
+                    ? 'cursor-pointer bg-gradient-to-r from-indigo-500 to-cyan-500 text-white hover:scale-[1.02] hover:opacity-90'
+                    : 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-slate-800 dark:text-slate-500'
+                }`}
+              >
+                Lanjut
+              </button>
+            )}
           </div>
 
           {mutation.isError && (
