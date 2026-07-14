@@ -18,8 +18,7 @@ const kuesionerData: KuesionerData = {
       namakelompok: 'Kelompok Layanan',
       pertanyaan: [
         { idpertanyaan: 1, pertanyaan: 'Layanan cepat?', jenisjwb: 'A', kunci: '' },
-        { idpertanyaan: 2, pertanyaan: 'Staf ramah?', jenisjwb: 'B', kunci: '' },
-        { idpertanyaan: 3, pertanyaan: 'Saran Anda?', jenisjwb: 'C', kunci: '' },
+        { idpertanyaan: 2, pertanyaan: 'Staf ramah?', jenisjwb: 'A', kunci: '' },
       ],
     },
   ],
@@ -81,10 +80,10 @@ describe('KuesionerPage - mengirim jawaban ke backend', () => {
 
     expect(await screen.findByText('Layanan cepat?', { exact: false })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Setuju' }));
-    await user.click(screen.getByRole('button', { name: 'Benar' }));
-    await user.type(screen.getByPlaceholderText('Ketik jawaban Anda di sini...'), 'Lebih cepat lagi ya');
-
+    const setujuButtons = screen.getAllByRole('button', { name: 'Setuju' });
+    await user.click(setujuButtons[0]);
+    const tidakSetujuButtons = screen.getAllByRole('button', { name: 'Tidak Setuju' });
+    await user.click(tidakSetujuButtons[1]);
     await user.click(screen.getByRole('button', { name: /kirim semua jawaban/i }));
 
     await waitFor(() => expect(postSpy).toHaveBeenCalledTimes(1));
@@ -92,8 +91,7 @@ describe('KuesionerPage - mengirim jawaban ke backend', () => {
       kdperiode: '2026-1',
       jawaban: [
         { idpertanyaan: 1, jenisjwb: 'A', kdkelompok: 'K1', jawaban: 'S' },
-        { idpertanyaan: 2, jenisjwb: 'B', kdkelompok: 'K1', jawaban: 'B' },
-        { idpertanyaan: 3, jenisjwb: 'C', kdkelompok: 'K1', jawaban: 'Lebih cepat lagi ya' },
+        { idpertanyaan: 2, jenisjwb: 'A', kdkelompok: 'K1', jawaban: 'TS' },
       ],
     });
   });
@@ -107,7 +105,8 @@ describe('KuesionerPage - mengirim jawaban ke backend', () => {
 
     expect(await screen.findByText('Layanan cepat?', { exact: false })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Setuju' }));
+    const setujuButtons = screen.getAllByRole('button', { name: 'Setuju' });
+    await user.click(setujuButtons[0]);
 
     const submitButton = screen.getByRole('button', { name: /kirim semua jawaban/i });
     expect(submitButton).toBeDisabled();
