@@ -31,7 +31,6 @@ export interface KuesionerData {
 export interface JawabanPayload {
   idpertanyaan: number;
   jenisjwb: string;
-  kdkelompok: string;
   jawaban: string | number;
 }
 

@@ -7,7 +7,7 @@ import { ThemeToggle } from '../components/ThemeToggle';
 
 export const KuesionerPage = () => {
   const { user } = useAuth();
-  const { data: kuesionerData, isLoading, isError } = useKuesioner();
+  const { data: kuesionerData, isLoading, isError, error } = useKuesioner();
   const mutation = useSubmitJawaban();
   const logout = useLogout();
   const [jawabanState, setJawabanState] = useState<Record<number, string | number>>({});
@@ -36,14 +36,32 @@ export const KuesionerPage = () => {
     );
   }
 
-  if (isError || !kuesionerData) {
+  const isDataKosong = !kuesionerData || (kuesionerData.kuesioner && kuesionerData.kuesioner.length === 0);
+
+  if (isError || isDataKosong) {
+    const errorMsg = isError ? getErrorMessage(error) : null;
+    // Jika backend mengirimkan pesan error spesifik, kita bisa tampilkan, 
+    // tapi secara default tampilkan warning belum diset.
+    const displayMsg = (errorMsg && errorMsg !== 'Terjadi kesalahan pada server. Silakan coba lagi nanti.') 
+      ? errorMsg 
+      : 'Pertanyaan belum diset sesuai dosen, Tendik Unit, dan Tendik Fakultas. Silakan hubungi Admin Kuesioner.';
+
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 text-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 dark:text-white">
-        <div className="max-w-md rounded-2xl border border-red-300 bg-white/80 p-6 text-center backdrop-blur-md dark:border-red-500/30 dark:bg-slate-800/60">
-          <p className="font-semibold text-red-600 dark:text-red-400">Gagal Mengambil Data</p>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Terjadi kesalahan koneksi atau periode kuesioner aktif tidak ditemukan.
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-4 text-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 dark:text-white">
+        <div className="animate-fade-in max-w-md rounded-3xl border border-amber-300 bg-white/80 p-8 text-center shadow-2xl backdrop-blur-md dark:border-amber-500/30 dark:bg-slate-800/50">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 text-3xl font-bold text-amber-500 dark:text-amber-400">
+            !
+          </div>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Peringatan</h2>
+          <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+            {displayMsg}
           </p>
+          <button
+            onClick={() => logout.mutate()}
+            className="mt-6 min-h-[44px] rounded-xl border border-slate-200 px-6 py-2 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+          >
+            Keluar
+          </button>
         </div>
       </div>
     );
@@ -111,13 +129,9 @@ export const KuesionerPage = () => {
     if (!isLastStep || !isFormValid || mutation.isPending) return;
 
     const jawabanPayload: JawabanPayload[] = allPertanyaan.map((p) => {
-      const parentKelompok = kelompokList.find((k) =>
-        k.pertanyaan.some((q) => q.idpertanyaan === p.idpertanyaan),
-      );
       return {
         idpertanyaan: p.idpertanyaan,
         jenisjwb: p.jenisjwb,
-        kdkelompok: parentKelompok ? parentKelompok.kdkelompok : '',
         jawaban: jawabanState[p.idpertanyaan],
       };
     });
@@ -188,10 +202,11 @@ export const KuesionerPage = () => {
                     </p>
 
                     {soal.jenisjwb === 'A' && (
-                      <div className="grid max-w-xl grid-cols-1 gap-2 sm:grid-cols-4">
+                      <div className="grid max-w-3xl grid-cols-1 gap-2 sm:grid-cols-5">
                         {[
                           { value: 'STS', label: 'Sangat Tidak Setuju' },
                           { value: 'TS', label: 'Tidak Setuju' },
+                          { value: 'N', label: 'Netral' },
                           { value: 'S', label: 'Setuju' },
                           { value: 'SS', label: 'Sangat Setuju' },
                         ].map(({ value, label }) => {
@@ -215,33 +230,10 @@ export const KuesionerPage = () => {
                     )}
 
                     {soal.jenisjwb === 'B' && (
-                      <div className="flex space-x-3">
-                        {['B', 'S'].map((opsi) => {
-                          const isSelected = jawabanState[soal.idpertanyaan] === opsi;
-                          const label = opsi === 'B' ? 'Benar' : 'Salah';
-                          return (
-                            <button
-                              key={opsi}
-                              type="button"
-                              onClick={() => handlePilihJawaban(soal.idpertanyaan, opsi)}
-                              className={`min-h-[44px] rounded-xl border px-6 py-2 text-xs font-bold transition-all duration-200 ${
-                                isSelected
-                                  ? 'border-cyan-500 bg-cyan-600 text-white shadow-lg shadow-cyan-600/30'
-                                  : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-400 dark:hover:border-white/20'
-                              }`}
-                            >
-                              {label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {soal.jenisjwb !== 'A' && soal.jenisjwb !== 'B' && (
-                      <div className="max-w-md">
+                      <div className="max-w-2xl">
                         <textarea
-                          rows={3}
-                          placeholder="Ketik jawaban Anda di sini..."
+                          rows={4}
+                          placeholder="Ketik jawaban esai bebas Anda di sini..."
                           value={jawabanState[soal.idpertanyaan] || ''}
                           onChange={(e) => handlePilihJawaban(soal.idpertanyaan, e.target.value)}
                           className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-300 dark:placeholder-slate-600"
