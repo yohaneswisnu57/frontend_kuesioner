@@ -188,11 +188,10 @@ export const KuesionerPage = () => {
                     </p>
 
                     {soal.jenisjwb === 'A' && (
-                      <div className="grid max-w-xl grid-cols-1 gap-2 sm:grid-cols-5">
+                      <div className="grid max-w-xl grid-cols-1 gap-2 sm:grid-cols-4">
                         {[
                           { value: 'STS', label: 'Sangat Tidak Setuju' },
                           { value: 'TS', label: 'Tidak Setuju' },
-                          { value: 'N', label: 'Netral' },
                           { value: 'S', label: 'Setuju' },
                           { value: 'SS', label: 'Sangat Setuju' },
                         ].map(({ value, label }) => {
