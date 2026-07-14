@@ -36,15 +36,23 @@ export const KuesionerPage = () => {
     );
   }
 
-  const isDataKosong = !kuesionerData || (kuesionerData.kuesioner && kuesionerData.kuesioner.length === 0);
+  const isPeriodeKosong = !kuesionerData?.periode || !kuesionerData.periode.kdperiode;
+  const isKelompokKosong = !kuesionerData?.kuesioner || kuesionerData.kuesioner.length === 0;
+  const isDataKosong = !kuesionerData || isPeriodeKosong || isKelompokKosong;
 
   if (isError || isDataKosong) {
     const errorMsg = isError ? getErrorMessage(error) : null;
-    // Jika backend mengirimkan pesan error spesifik, kita bisa tampilkan, 
+    // Jika backend mengirimkan pesan error spesifik, kita bisa tampilkan,
     // tapi secara default tampilkan warning belum diset.
-    const displayMsg = (errorMsg && errorMsg !== 'Terjadi kesalahan pada server. Silakan coba lagi nanti.') 
-      ? errorMsg 
-      : 'Pertanyaan belum diset sesuai dosen, Tendik Unit, dan Tendik Fakultas. Silakan hubungi Admin Kuesioner.';
+    let fallbackMsg = 'Pertanyaan belum diset sesuai dosen, Tendik Unit, dan Tendik Fakultas. Silakan hubungi Admin Kuesioner.';
+    if (!isError && isPeriodeKosong) {
+      fallbackMsg = 'Periode kuesioner aktif belum diset oleh Admin. Silakan hubungi Admin Kuesioner.';
+    } else if (!isError && isKelompokKosong) {
+      fallbackMsg = 'Kelompok dan pertanyaan kuesioner belum diset untuk peran Anda. Silakan hubungi Admin Kuesioner.';
+    }
+    const displayMsg = (errorMsg && errorMsg !== 'Terjadi kesalahan pada server. Silakan coba lagi nanti.')
+      ? errorMsg
+      : fallbackMsg;
 
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-4 text-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 dark:text-white">
