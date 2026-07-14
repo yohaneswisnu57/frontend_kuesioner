@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useLogin } from '../lib/hooks';
 import { getToken, getErrorMessage } from '../lib/api';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -25,26 +26,30 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 px-4">
-      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-indigo-600/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-4 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900">
+      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-indigo-400/20 blur-3xl dark:bg-indigo-600/20" />
+      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl dark:bg-cyan-500/20" />
 
-      <div className="animate-fade-in relative w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl md:p-10">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
+
+      <div className="animate-fade-in relative w-full max-w-md rounded-3xl border border-slate-200 bg-white/70 p-8 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-white/5 md:p-10">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 text-2xl font-bold text-white shadow-lg shadow-indigo-600/30">
             S
           </div>
-          <h1 className="bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-2xl font-bold text-transparent">
+          <h1 className="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-2xl font-bold text-transparent dark:from-indigo-300 dark:to-cyan-300">
             Kuesioner Simanja
           </h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
             Masuk untuk mengisi kuesioner evaluasi periodik
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
           <div>
-            <label htmlFor="userid" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-400">
+            <label htmlFor="userid" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               User ID (NIP)
             </label>
             <input
@@ -54,13 +59,13 @@ export const LoginPage = () => {
               autoComplete="off"
               value={userid}
               onChange={(e) => setUserid(e.target.value)}
-              className="w-full min-h-[44px] rounded-xl border border-white/10 bg-slate-950/60 px-4 py-3 text-slate-100 placeholder-slate-500 transition-all focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+              className="w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-all focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-100 dark:placeholder-slate-500"
               placeholder="Masukkan NIP Anda"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-400">
+            <label htmlFor="password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Password
             </label>
             <input
@@ -70,13 +75,13 @@ export const LoginPage = () => {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full min-h-[44px] rounded-xl border border-white/10 bg-slate-950/60 px-4 py-3 text-slate-100 placeholder-slate-500 transition-all focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+              className="w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-all focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-100 dark:placeholder-slate-500"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
               {error}
             </div>
           )}
@@ -97,7 +102,7 @@ export const LoginPage = () => {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-slate-500">
+        <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500">
           Gunakan perangkat pribadi saat mengisi kuesioner untuk menjaga keamanan akun Anda.
         </p>
       </div>
