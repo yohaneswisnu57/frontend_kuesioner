@@ -163,21 +163,27 @@ export const KuesionerPage = () => {
                     </p>
 
                     {soal.jenisjwb === 'A' && (
-                      <div className="grid max-w-lg grid-cols-5 gap-2">
-                        {['STS', 'TS', 'N', 'S', 'SS'].map((opsi) => {
-                          const isSelected = jawabanState[soal.idpertanyaan] === opsi;
+                      <div className="grid max-w-xl grid-cols-1 gap-2 sm:grid-cols-5">
+                        {[
+                          { value: 'STS', label: 'Sangat Tidak Setuju' },
+                          { value: 'TS', label: 'Tidak Setuju' },
+                          { value: 'N', label: 'Netral' },
+                          { value: 'S', label: 'Setuju' },
+                          { value: 'SS', label: 'Sangat Setuju' },
+                        ].map(({ value, label }) => {
+                          const isSelected = jawabanState[soal.idpertanyaan] === value;
                           return (
                             <button
-                              key={opsi}
+                              key={value}
                               type="button"
-                              onClick={() => handlePilihJawaban(soal.idpertanyaan, opsi)}
-                              className={`min-h-[44px] rounded-xl border px-3 py-2 text-xs font-semibold tracking-wider transition-all duration-200 ${
+                              onClick={() => handlePilihJawaban(soal.idpertanyaan, value)}
+                              className={`min-h-[44px] rounded-xl border px-3 py-2 text-center text-xs font-semibold leading-snug transition-all duration-200 ${
                                 isSelected
                                   ? 'border-indigo-500 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
                                   : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-400 dark:hover:border-white/20 dark:hover:text-slate-300'
                               }`}
                             >
-                              {opsi}
+                              {label}
                             </button>
                           );
                         })}

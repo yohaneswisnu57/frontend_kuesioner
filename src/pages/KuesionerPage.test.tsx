@@ -64,7 +64,7 @@ describe('KuesionerPage - mengirim jawaban ke backend', () => {
 
     expect(await screen.findByText('Layanan cepat?', { exact: false })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'S' }));
+    await user.click(screen.getByRole('button', { name: 'Setuju' }));
     await user.click(screen.getByRole('button', { name: 'Benar' }));
     await user.type(screen.getByPlaceholderText('Ketik jawaban Anda di sini...'), 'Lebih cepat lagi ya');
 
@@ -90,7 +90,7 @@ describe('KuesionerPage - mengirim jawaban ke backend', () => {
 
     expect(await screen.findByText('Layanan cepat?', { exact: false })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'S' }));
+    await user.click(screen.getByRole('button', { name: 'Setuju' }));
 
     const submitButton = screen.getByRole('button', { name: /kirim semua jawaban/i });
     expect(submitButton).toBeDisabled();
