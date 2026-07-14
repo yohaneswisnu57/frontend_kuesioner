@@ -129,9 +129,13 @@ export const KuesionerPage = () => {
     if (!isLastStep || !isFormValid || mutation.isPending) return;
 
     const jawabanPayload: JawabanPayload[] = allPertanyaan.map((p) => {
+      const parentKelompok = kelompokList.find((k) =>
+        k.pertanyaan.some((q) => q.idpertanyaan === p.idpertanyaan),
+      );
       return {
         idpertanyaan: p.idpertanyaan,
         jenisjwb: p.jenisjwb,
+        kdkelompok: parentKelompok ? parentKelompok.kdkelompok : '',
         jawaban: jawabanState[p.idpertanyaan],
       };
     });
@@ -202,11 +206,10 @@ export const KuesionerPage = () => {
                     </p>
 
                     {soal.jenisjwb === 'A' && (
-                      <div className="grid max-w-3xl grid-cols-1 gap-2 sm:grid-cols-5">
+                      <div className="grid max-w-3xl grid-cols-1 gap-2 sm:grid-cols-4">
                         {[
                           { value: 'STS', label: 'Sangat Tidak Setuju' },
                           { value: 'TS', label: 'Tidak Setuju' },
-                          { value: 'N', label: 'Netral' },
                           { value: 'S', label: 'Setuju' },
                           { value: 'SS', label: 'Sangat Setuju' },
                         ].map(({ value, label }) => {
