@@ -229,7 +229,7 @@ export const KuesionerPage = () => {
                       </div>
                     )}
 
-                    {soal.jenisjwb === 'B' && (
+                    {soal.jenisjwb !== 'A' && (
                       <div className="max-w-2xl">
                         <textarea
                           rows={4}
