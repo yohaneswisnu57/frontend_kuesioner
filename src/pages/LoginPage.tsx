@@ -10,6 +10,7 @@ export const LoginPage = () => {
   const [userid, setUserid] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isHidden, setIsHidden] = useState(true);
 
   if (getToken()) return <Navigate to="/kuesioner" replace />;
 
@@ -40,17 +41,17 @@ export const LoginPage = () => {
             S
           </div>
           <h1 className="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-2xl font-bold text-transparent dark:from-indigo-300 dark:to-cyan-300">
-            Kuesioner Simanja
+            Kuesioner Universitas Katolik Widya Mandala Surabaya
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Masuk untuk mengisi kuesioner evaluasi periodik
+            Masuk untuk mengisi kuesioner periodik
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
           <div>
             <label htmlFor="userid" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              User ID (NIP)
+              Username(NIP)
             </label>
             <input
               id="userid"
@@ -68,16 +69,36 @@ export const LoginPage = () => {
             <label htmlFor="password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Password
             </label>
-            <input
-              id="password"
-              type="password"
-              required
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-all focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-100 dark:placeholder-slate-500"
-              placeholder="••••••••"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={isHidden ? 'password' : 'text'}
+                required
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-4 py-3 pr-11 text-slate-900 placeholder-slate-400 transition-all focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-100 dark:placeholder-slate-500"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setIsHidden((prev) => !prev)}
+                aria-label={isHidden ? 'Tampilkan password' : 'Sembunyikan password'}
+                className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+              >
+                {isHidden ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                    <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a19.4 19.4 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.4 19.4 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <path d="M1 1l22 22" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
 
           {error && (
