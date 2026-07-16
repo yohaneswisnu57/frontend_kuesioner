@@ -34,8 +34,8 @@ describe('LoginPage - mengirim input ke backend', () => {
     const user = userEvent.setup();
     renderLoginPage();
 
-    await user.type(screen.getByLabelText(/user id/i), '12345');
-    await user.type(screen.getByLabelText(/password/i), 'rahasia123');
+    await user.type(screen.getByLabelText(/username/i), '12345');
+    await user.type(screen.getByLabelText(/^password$/i), 'rahasia123');
     await user.click(screen.getByRole('button', { name: /masuk/i }));
 
     await waitFor(() => expect(postSpy).toHaveBeenCalledTimes(1));
@@ -53,8 +53,8 @@ describe('LoginPage - mengirim input ke backend', () => {
     const user = userEvent.setup();
     renderLoginPage();
 
-    await user.type(screen.getByLabelText(/user id/i), '999');
-    await user.type(screen.getByLabelText(/password/i), 'secret');
+    await user.type(screen.getByLabelText(/username/i), '999');
+    await user.type(screen.getByLabelText(/^password$/i), 'secret');
     await user.click(screen.getByRole('button', { name: /masuk/i }));
 
     await waitFor(() => expect(localStorage.getItem('simanja_token')).toBe('token-abc'));
@@ -73,8 +73,8 @@ describe('LoginPage - mengirim input ke backend', () => {
     const user = userEvent.setup();
     renderLoginPage();
 
-    await user.type(screen.getByLabelText(/user id/i), 'salah');
-    await user.type(screen.getByLabelText(/password/i), 'salah');
+    await user.type(screen.getByLabelText(/username/i), 'salah');
+    await user.type(screen.getByLabelText(/^password$/i), 'salah');
     await user.click(screen.getByRole('button', { name: /masuk/i }));
 
     expect(await screen.findByText('User ID atau password salah.')).toBeInTheDocument();

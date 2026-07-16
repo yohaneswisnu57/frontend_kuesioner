@@ -51,7 +51,7 @@ export const LoginPage = () => {
         <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
           <div>
             <label htmlFor="userid" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              Username(NIP)
+              Username (NIP)
             </label>
             <input
               id="userid"
