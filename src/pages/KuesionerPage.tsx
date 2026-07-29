@@ -1,9 +1,27 @@
 import { useState } from 'react';
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  MinusCircleIcon,
+  SealWarningIcon,
+  SignOutIcon,
+  SpinnerGapIcon,
+  XCircleIcon,
+} from '@phosphor-icons/react';
 import { useKuesioner, useSubmitJawaban, useLogout } from '../lib/hooks';
 import { useAuth } from '../context/AuthContext';
 import { getErrorMessage } from '../lib/api';
 import type { JawabanPayload } from '../types/kuesioner';
 import { ThemeToggle } from '../components/ThemeToggle';
+
+const LIKERT_OPTIONS = [
+  { value: 'STS', label: 'Sangat Tidak Setuju', icon: XCircleIcon },
+  { value: 'TS', label: 'Tidak Setuju', icon: MinusCircleIcon },
+  { value: 'S', label: 'Setuju', icon: CheckCircleIcon },
+  { value: 'SS', label: 'Sangat Setuju', icon: CheckCircleIcon },
+] as const;
 
 export const KuesionerPage = () => {
   const { user } = useAuth();
@@ -16,10 +34,10 @@ export const KuesionerPage = () => {
 
   if (logout.isPending || logout.isSuccess) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 text-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 dark:text-white">
+      <div className="flex min-h-[100dvh] items-center justify-center bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-indigo-400 border-t-transparent" />
-          <p className="mt-4 text-slate-500 dark:text-slate-400">Keluar...</p>
+          <SpinnerGapIcon size={36} weight="bold" className="mx-auto animate-spin text-amber-500" />
+          <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">Keluar...</p>
         </div>
       </div>
     );
@@ -27,10 +45,16 @@ export const KuesionerPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 text-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 dark:text-white">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-indigo-400 border-t-transparent" />
-          <p className="mt-4 text-slate-500 dark:text-slate-400">Memuat pertanyaan kuesioner...</p>
+      <div className="min-h-[100dvh] bg-zinc-50 px-4 py-10 dark:bg-zinc-950 md:px-8">
+        <div className="mx-auto max-w-4xl animate-pulse">
+          <div className="mb-8 h-24 rounded-2xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900" />
+          <div className="mb-8 h-16 rounded-2xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900" />
+          <div className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-900 md:p-8">
+            <div className="h-5 w-2/3 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-24 rounded-xl bg-zinc-100 dark:bg-zinc-800/60" />
+            <div className="h-5 w-1/2 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-24 rounded-xl bg-zinc-100 dark:bg-zinc-800/60" />
+          </div>
         </div>
       </div>
     );
@@ -43,8 +67,6 @@ export const KuesionerPage = () => {
 
   if (isError || isDataKosong) {
     const errorMsg = isError ? getErrorMessage(error) : null;
-    // Jika backend mengirimkan pesan error spesifik, kita bisa tampilkan,
-    // tapi secara default tampilkan warning belum diset.
     let fallbackMsg = 'Pertanyaan belum diset sesuai dosen, Tendik Unit, dan Tendik Fakultas. Silakan hubungi Admin Kuesioner.';
     if (!isError && isPeriodeKosong) {
       fallbackMsg = 'Periode kuesioner aktif belum diset oleh Admin. Silakan hubungi Admin Kuesioner.';
@@ -56,19 +78,18 @@ export const KuesionerPage = () => {
       : fallbackMsg;
 
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-4 text-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 dark:text-white">
-        <div className="animate-fade-in max-w-md rounded-3xl border border-amber-300 bg-white/80 p-8 text-center shadow-2xl backdrop-blur-md dark:border-amber-500/30 dark:bg-slate-800/50">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 text-3xl font-bold text-amber-500 dark:text-amber-400">
-            !
+      <div className="flex min-h-[100dvh] items-center justify-center bg-zinc-50 px-4 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
+        <div className="animate-fade-in w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm dark:border-white/10 dark:bg-zinc-900">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400">
+            <SealWarningIcon size={28} weight="bold" />
           </div>
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Peringatan</h2>
-          <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-            {displayMsg}
-          </p>
+          <h2 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Peringatan</h2>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{displayMsg}</p>
           <button
             onClick={() => logout.mutate()}
-            className="mt-6 min-h-[44px] rounded-xl border border-slate-200 px-6 py-2 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+            className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full border border-zinc-200 px-6 text-sm font-semibold text-zinc-600 transition-all hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/5"
           >
+            <SignOutIcon size={16} weight="bold" />
             Keluar
           </button>
         </div>
@@ -78,21 +99,22 @@ export const KuesionerPage = () => {
 
   if (kuesionerData.is_sudah_mengisi || (submitted && mutation.isSuccess)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-4 text-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 dark:text-white">
-        <div className="animate-fade-in max-w-lg rounded-3xl border border-emerald-300 bg-white/80 p-8 text-center shadow-2xl backdrop-blur-md dark:border-emerald-500/20 dark:bg-slate-800/50">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-3xl text-emerald-500 dark:text-emerald-400">
-            ✓
+      <div className="flex min-h-[100dvh] items-center justify-center bg-zinc-50 px-4 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
+        <div className="animate-fade-in w-full max-w-lg rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm dark:border-white/10 dark:bg-zinc-900">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+            <CheckCircleIcon size={28} weight="bold" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Terima Kasih</h2>
-          <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+          <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Terima Kasih</h2>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
             Anda sudah mengisi kuesioner untuk periode{' '}
-            <strong className="text-slate-700 dark:text-slate-200">{kuesionerData.periode.kdperiode}</strong>. Terima
+            <strong className="font-semibold text-zinc-700 dark:text-zinc-200">{kuesionerData.periode.kdperiode}</strong>. Terima
             kasih atas partisipasi Anda dalam membantu peningkatan mutu institusi.
           </p>
           <button
             onClick={() => logout.mutate()}
-            className="mt-6 min-h-[44px] rounded-xl border border-slate-200 px-6 py-2 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+            className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full border border-zinc-200 px-6 text-sm font-semibold text-zinc-600 transition-all hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/5"
           >
+            <SignOutIcon size={16} weight="bold" />
             Keluar
           </button>
         </div>
@@ -156,41 +178,56 @@ export const KuesionerPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-4 py-10 text-slate-800 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 dark:text-slate-100 md:px-8">
+    <div className="min-h-[100dvh] bg-zinc-50 px-4 py-10 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 md:px-8">
       <div className="mx-auto max-w-4xl">
-        <header className="animate-fade-in mb-8 flex items-center justify-between rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-white/5">
-          <div>
-            <h1 className="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-2xl font-bold text-transparent dark:from-indigo-300 dark:to-cyan-300 md:text-3xl">
-              Kuesioner Evaluasi
+        <header className="animate-fade-in mb-6 flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-3xl">
+              Kuesioner <span className="text-amber-500">Evaluasi</span>
             </h1>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-2 truncate text-sm text-zinc-500 dark:text-zinc-400">
               {user?.nama ? `Halo, ${user.nama} · ` : ''}Periode Aktif:{' '}
-              <span className="font-semibold text-slate-700 dark:text-slate-200">{kuesionerData.periode.kdperiode}</span>
+              <span className="font-semibold text-zinc-700 dark:text-zinc-200">{kuesionerData.periode.kdperiode}</span>
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
             <button
               onClick={() => logout.mutate()}
-              className="min-h-[44px] rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+              className="flex min-h-[44px] items-center gap-2 rounded-full border border-zinc-200 px-4 text-xs font-semibold text-zinc-600 transition-all hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/5"
             >
+              <SignOutIcon size={14} weight="bold" />
               Keluar
             </button>
           </div>
         </header>
 
-        <div className="sticky top-4 z-40 mb-8 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-2xl backdrop-blur-lg dark:border-white/10 dark:bg-slate-900/80">
-          <div className="mb-1 flex justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
-            <span>
-              Kategori {currentStep + 1} dari {kelompokList.length}
-            </span>
-            <span>
-              {totalDijawab} dari {totalSoal} Soal Terjawab ({progressPersen}%)
+        <div className="sticky top-4 z-40 mb-6 rounded-2xl border border-zinc-200 bg-white/95 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-900/95">
+          <div className="mb-3 flex items-center justify-between gap-3 overflow-x-auto">
+            <ol className="flex shrink-0 items-center gap-1.5">
+              {kelompokList.map((k, i) => (
+                <li
+                  key={k.kdkelompok}
+                  title={k.namakelompok}
+                  className={`flex h-7 min-w-7 shrink-0 items-center justify-center rounded-full px-2 text-[11px] font-bold transition-colors ${
+                    i === currentStep
+                      ? 'bg-amber-500 text-zinc-900'
+                      : i < currentStep
+                        ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                        : 'bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500'
+                  }`}
+                >
+                  {i < currentStep ? <CheckIcon size={13} weight="bold" /> : i + 1}
+                </li>
+              ))}
+            </ol>
+            <span className="shrink-0 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              {totalDijawab} / {totalSoal} soal
             </span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-300 ease-out"
+              className="h-full rounded-full bg-amber-500 transition-all duration-300 ease-out"
               style={{ width: `${progressPersen}%` }}
             />
           </div>
@@ -200,40 +237,39 @@ export const KuesionerPage = () => {
           {currentKelompok && (
             <section
               key={currentKelompok.kdkelompok}
-              className="animate-fade-in space-y-6 rounded-3xl border border-slate-200 bg-white/70 p-6 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-white/5 md:p-8"
+              className="animate-fade-in relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900 md:p-8"
             >
-              <h2 className="flex items-center border-b border-slate-200 pb-3 text-xl font-bold text-slate-700 dark:border-white/10 dark:text-slate-200">
-                <span className="mr-3 h-6 w-1.5 rounded-full bg-indigo-500" />
+              <span className="absolute inset-y-0 left-0 w-1.5 bg-amber-500" />
+              <h2 className="text-lg font-bold tracking-tight text-zinc-800 dark:text-zinc-100">
                 {currentKelompok.namakelompok}
               </h2>
 
-              <div className="space-y-8 divide-y divide-slate-200 dark:divide-white/10">
+              <div className="mt-6 space-y-8 divide-y divide-zinc-100 dark:divide-white/5">
                 {currentKelompok.pertanyaan.map((soal, index) => (
-                  <div key={soal.idpertanyaan} className={`space-y-3 pt-6 ${index === 0 ? 'pt-0' : ''}`}>
-                    <p className="font-medium leading-relaxed text-slate-600 dark:text-slate-300">
-                      {index + 1}. {soal.pertanyaan}
+                  <div key={soal.idpertanyaan} className={`space-y-4 pt-6 ${index === 0 ? 'pt-0' : ''}`}>
+                    <p className="flex gap-3 font-medium leading-relaxed text-zinc-700 dark:text-zinc-200">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-amber-500 text-xs font-bold text-amber-600 dark:text-amber-400">
+                        {index + 1}
+                      </span>
+                      {soal.pertanyaan}
                     </p>
 
                     {soal.jenisjwb === 'A' && (
-                      <div className="grid max-w-3xl grid-cols-1 gap-2 sm:grid-cols-4">
-                        {[
-                          { value: 'STS', label: 'Sangat Tidak Setuju' },
-                          { value: 'TS', label: 'Tidak Setuju' },
-                          { value: 'S', label: 'Setuju' },
-                          { value: 'SS', label: 'Sangat Setuju' },
-                        ].map(({ value, label }) => {
+                      <div className="grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">
+                        {LIKERT_OPTIONS.map(({ value, label, icon: OptionIcon }) => {
                           const isSelected = jawabanState[soal.idpertanyaan] === value;
                           return (
                             <button
                               key={value}
                               type="button"
                               onClick={() => handlePilihJawaban(soal.idpertanyaan, value)}
-                              className={`min-h-[44px] rounded-xl border px-3 py-2 text-center text-xs font-semibold leading-snug transition-all duration-200 ${
+                              className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-center text-[11px] font-semibold leading-snug transition-all duration-150 active:scale-[0.98] ${
                                 isSelected
-                                  ? 'border-indigo-500 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                                  : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-400 dark:hover:border-white/20 dark:hover:text-slate-300'
+                                  ? 'border-amber-500 bg-amber-500 text-zinc-900'
+                                  : 'border-zinc-200 bg-white text-zinc-500 hover:border-amber-300 hover:text-zinc-700 dark:border-white/10 dark:bg-zinc-950/40 dark:text-zinc-400 dark:hover:border-amber-400/40 dark:hover:text-zinc-300'
                               }`}
                             >
+                              <OptionIcon size={20} weight={isSelected ? 'fill' : 'regular'} />
                               {label}
                             </button>
                           );
@@ -248,7 +284,7 @@ export const KuesionerPage = () => {
                           placeholder="Ketik jawaban esai bebas Anda di sini..."
                           value={jawabanState[soal.idpertanyaan] || ''}
                           onChange={(e) => handlePilihJawaban(soal.idpertanyaan, e.target.value)}
-                          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-300 dark:placeholder-slate-600"
+                          className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-700 placeholder-zinc-400 transition-all focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 dark:border-white/10 dark:bg-zinc-950/60 dark:text-zinc-300 dark:placeholder-zinc-600"
                         />
                       </div>
                     )}
@@ -258,15 +294,16 @@ export const KuesionerPage = () => {
             </section>
           )}
 
-          <div className="flex items-center justify-between gap-3 pt-4">
+          <div className="flex items-center justify-between gap-3 pt-2">
             <button
               type="button"
               onClick={handleBack}
               disabled={currentStep === 0}
-              className={`min-h-[44px] rounded-xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5 ${
+              className={`inline-flex min-h-[44px] items-center gap-2 rounded-full border border-zinc-200 px-6 text-sm font-semibold text-zinc-600 transition-all hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/5 ${
                 currentStep === 0 ? 'invisible' : ''
               }`}
             >
+              <ArrowLeftIcon size={16} weight="bold" />
               Kembali
             </button>
 
@@ -274,15 +311,15 @@ export const KuesionerPage = () => {
               <button
                 type="submit"
                 disabled={!isFormValid || mutation.isPending}
-                className={`flex min-h-[44px] items-center rounded-2xl px-8 py-3 font-bold tracking-wide shadow-xl transition-all duration-300 ${
+                className={`inline-flex min-h-[44px] items-center gap-2 rounded-full px-8 text-sm font-bold tracking-wide transition-all duration-200 ${
                   isFormValid && !mutation.isPending
-                    ? 'cursor-pointer bg-gradient-to-r from-indigo-500 to-cyan-500 text-white hover:scale-[1.02] hover:opacity-90'
-                    : 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-slate-800 dark:text-slate-500'
+                    ? 'cursor-pointer bg-amber-500 text-zinc-900 hover:bg-amber-400 active:scale-[0.98]'
+                    : 'cursor-not-allowed border border-zinc-200 bg-zinc-100 text-zinc-400 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-500'
                 }`}
               >
                 {mutation.isPending ? (
                   <>
-                    <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-slate-500 border-t-transparent" />
+                    <SpinnerGapIcon size={16} weight="bold" className="animate-spin" />
                     Menyimpan...
                   </>
                 ) : (
@@ -294,19 +331,22 @@ export const KuesionerPage = () => {
                 type="button"
                 onClick={handleNext}
                 disabled={!isCurrentStepValid}
-                className={`flex min-h-[44px] items-center rounded-2xl px-8 py-3 font-bold tracking-wide shadow-xl transition-all duration-300 ${
+                className={`inline-flex min-h-[44px] items-center gap-2 rounded-full px-8 text-sm font-bold tracking-wide transition-all duration-200 ${
                   isCurrentStepValid
-                    ? 'cursor-pointer bg-gradient-to-r from-indigo-500 to-cyan-500 text-white hover:scale-[1.02] hover:opacity-90'
-                    : 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-slate-800 dark:text-slate-500'
+                    ? 'cursor-pointer bg-amber-500 text-zinc-900 hover:bg-amber-400 active:scale-[0.98]'
+                    : 'cursor-not-allowed border border-zinc-200 bg-zinc-100 text-zinc-400 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-500'
                 }`}
               >
                 Lanjut
+                <ArrowRightIcon size={16} weight="bold" />
               </button>
             )}
           </div>
 
           {mutation.isError && (
-            <p className="text-right text-sm text-red-500 dark:text-red-400">{getErrorMessage(mutation.error)}</p>
+            <p className="text-right text-sm font-medium text-rose-600 dark:text-rose-400">
+              {getErrorMessage(mutation.error)}
+            </p>
           )}
         </form>
       </div>
