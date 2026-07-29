@@ -37,7 +37,8 @@ export const KuesionerPage = () => {
   }
 
   const isPeriodeKosong = !kuesionerData?.periode || !kuesionerData.periode.kdperiode;
-  const isKelompokKosong = !kuesionerData?.kuesioner || kuesionerData.kuesioner.length === 0;
+  const isKelompokKosong =
+    !kuesionerData?.is_sudah_mengisi && (!kuesionerData?.kuesioner || kuesionerData.kuesioner.length === 0);
   const isDataKosong = !kuesionerData || isPeriodeKosong || isKelompokKosong;
 
   if (isError || isDataKosong) {
