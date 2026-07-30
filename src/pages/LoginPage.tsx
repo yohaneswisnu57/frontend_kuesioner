@@ -37,8 +37,8 @@ export const LoginPage = () => {
 
       <div className="animate-fade-in relative w-full max-w-md rounded-3xl border border-slate-200 bg-white/70 p-8 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-white/5 md:p-10">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 text-2xl font-bold text-white shadow-lg shadow-indigo-600/30">
-            S
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white p-1.5 shadow-lg shadow-indigo-600/30">
+            <img src="/favicon.svg" alt="Logo UKWMS" className="h-full w-full object-contain" />
           </div>
           <h1 className="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-2xl font-bold text-transparent dark:from-indigo-300 dark:to-cyan-300">
             Kuesioner Universitas Katolik Widya Mandala Surabaya

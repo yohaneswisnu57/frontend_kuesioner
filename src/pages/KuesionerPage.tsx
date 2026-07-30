@@ -23,6 +23,14 @@ const LIKERT_OPTIONS = [
   { value: 'SS', label: 'Sangat Setuju', icon: CheckCircleIcon },
 ] as const;
 
+const formatPeriode = (kdperiode: string) => {
+  const digits = kdperiode.replace(/\D/g, '');
+  const tahun = digits.slice(0, 4);
+  const kodeSemester = digits.charAt(4);
+  const semester = kodeSemester === '1' ? 'Gasal' : kodeSemester === '2' ? 'Genap' : '';
+  return semester ? `${tahun} ${semester}` : kdperiode;
+};
+
 export const KuesionerPage = () => {
   const { user } = useAuth();
   const { data: kuesionerData, isLoading, isError, error } = useKuesioner();
@@ -107,7 +115,7 @@ export const KuesionerPage = () => {
           <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Terima Kasih</h2>
           <p className="mt-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
             Anda sudah mengisi kuesioner untuk periode{' '}
-            <strong className="font-semibold text-zinc-700 dark:text-zinc-200">{kuesionerData.periode.kdperiode}</strong>. Terima
+            <strong className="font-semibold text-zinc-700 dark:text-zinc-200">{formatPeriode(kuesionerData.periode.kdperiode)}</strong>. Terima
             kasih atas partisipasi Anda dalam membantu peningkatan mutu institusi.
           </p>
           <button
@@ -187,7 +195,7 @@ export const KuesionerPage = () => {
             </h1>
             <p className="mt-2 truncate text-sm text-zinc-500 dark:text-zinc-400">
               {user?.nama ? `Halo, ${user.nama} · ` : ''}Periode Aktif:{' '}
-              <span className="font-semibold text-zinc-700 dark:text-zinc-200">{kuesionerData.periode.kdperiode}</span>
+              <span className="font-semibold text-zinc-700 dark:text-zinc-200">{formatPeriode(kuesionerData.periode.kdperiode)}</span>
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
