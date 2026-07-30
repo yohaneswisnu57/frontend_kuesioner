@@ -13,6 +13,7 @@ import {
 import { useKuesioner, useSubmitJawaban, useLogout } from '../lib/hooks';
 import { useAuth } from '../context/AuthContext';
 import { getErrorMessage } from '../lib/api';
+import { filterKelompokByKategori } from '../lib/filterKelompok';
 import type { JawabanPayload } from '../types/kuesioner';
 import { ThemeToggle } from '../components/ThemeToggle';
 
@@ -130,7 +131,9 @@ export const KuesionerPage = () => {
     );
   }
 
-  const kelompokList = kuesionerData.kuesioner || [];
+  const rawKelompokList = kuesionerData.kuesioner || [];
+  const kelompokList = filterKelompokByKategori(rawKelompokList, user);
+
   const allPertanyaan = kelompokList.flatMap((k) => k.pertanyaan);
   const totalSoal = allPertanyaan.length;
   const totalDijawab = Object.keys(jawabanState).length;

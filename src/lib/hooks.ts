@@ -14,26 +14,6 @@ export const useUser = () => {
   });
 };
 
-export interface LoginPayload {
-  userid: string;
-  password: string;
-}
-
-export const useLogin = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (payload: LoginPayload) => {
-      const { data } = await apiClient.post('/kuesioner/login', payload);
-      return data;
-    },
-    onSuccess: (data) => {
-      const token = data?.data?.token ?? data?.token;
-      const user = data?.data?.user ?? data?.user;
-      if (token) setToken(token);
-      if (user) queryClient.setQueryData(['user-profile'], user);
-    },
-  });
-};
 
 export const useLoginSSO = () => {
   const queryClient = useQueryClient();

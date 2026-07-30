@@ -1,7 +1,13 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://simanja2.ukwms.ac.id/api';
+const SSO_URL = import.meta.env.VITE_SSO_URL || 'https://app.ukwms.ac.id';
 const TOKEN_KEY = 'simanja_token';
+
+export const getSsoLoginUrl = () => {
+  const callbackUrl = import.meta.env.VITE_CALLBACK_URL || `${window.location.origin}/callback`;
+  return `${SSO_URL.replace(/\/$/, '')}/login?redirect=${encodeURIComponent(callbackUrl)}`;
+};
 
 export const apiClient = axios.create({
   baseURL: API_URL,
@@ -28,7 +34,9 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       clearToken();
-      if (window.location.pathname !== '/login') {
+      // Do not redirect if we are already on /login or /callback (SSO processing page)
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/callback' && currentPath !== '/sso/callback') {
         window.location.href = '/login';
       }
     }

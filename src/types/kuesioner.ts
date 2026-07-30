@@ -1,7 +1,11 @@
 export interface User {
   userid: string;
+  status_pegawai: string;
   nama: string;
   role: string;
+  is_dosen: boolean;
+  is_tendik_fakultas: boolean;
+  is_tendik_unit: boolean;
 }
 
 export interface Periode {
@@ -16,9 +20,12 @@ export interface Pertanyaan {
   kunci: string | null;
 }
 
+export type KategoriPegawai = 'dosen' | 'tendik_fakultas' | 'tendik_unit' | 'umum';
+
 export interface Kelompok {
   kdkelompok: string;
   namakelompok: string;
+  kategori_pegawai: KategoriPegawai;
   pertanyaan: Pertanyaan[];
 }
 

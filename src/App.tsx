@@ -5,6 +5,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import { RequireAuth } from './components/RequireAuth';
 import { LoginPage } from './pages/LoginPage';
 import { KuesionerPage } from './pages/KuesionerPage';
+import { SsoCallbackPage } from './pages/SsoCallbackPage';
+import { RingkasanKelompokPage } from './pages/RingkasanKelompokPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,11 +24,21 @@ function App() {
           <AuthProvider>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/callback" element={<SsoCallbackPage />} />
+              <Route path="/sso/callback" element={<SsoCallbackPage />} />
               <Route
                 path="/kuesioner"
                 element={
                   <RequireAuth>
                     <KuesionerPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/ringkasan-kelompok"
+                element={
+                  <RequireAuth>
+                    <RingkasanKelompokPage />
                   </RequireAuth>
                 }
               />
