@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient, getToken, setToken, clearToken } from './api';
+import { apiClient, getToken, setToken, clearToken, getSsoHomeUrl } from './api';
 import type { KuesionerData, SubmitPayload, User } from '../types/kuesioner';
 
 export const useUser = () => {
@@ -38,7 +38,7 @@ export const useLogout = () => {
     onSettled: () => {
       clearToken();
       queryClient.clear();
-      window.location.href = '/login';
+      window.location.href = getSsoHomeUrl();
     },
   });
 };

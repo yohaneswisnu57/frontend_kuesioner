@@ -9,6 +9,8 @@ export const getSsoLoginUrl = () => {
   return `${SSO_URL.replace(/\/$/, '')}/login?redirect=${encodeURIComponent(callbackUrl)}`;
 };
 
+export const getSsoHomeUrl = () => SSO_URL.replace(/\/$/, '');
+
 export const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
