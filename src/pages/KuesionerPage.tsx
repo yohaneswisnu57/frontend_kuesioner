@@ -4,11 +4,9 @@ import {
   ArrowRightIcon,
   CheckCircleIcon,
   CheckIcon,
-  MinusCircleIcon,
   SealWarningIcon,
   SignOutIcon,
   SpinnerGapIcon,
-  XCircleIcon,
 } from '@phosphor-icons/react';
 import { useKuesioner, useSubmitJawaban, useLogout } from '../lib/hooks';
 import { useAuth } from '../context/AuthContext';
@@ -18,10 +16,10 @@ import type { JawabanPayload } from '../types/kuesioner';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 const LIKERT_OPTIONS = [
-  { value: 'STS', label: 'Sangat Tidak Setuju', icon: XCircleIcon },
-  { value: 'TS', label: 'Tidak Setuju', icon: MinusCircleIcon },
-  { value: 'S', label: 'Setuju', icon: CheckCircleIcon },
-  { value: 'SS', label: 'Sangat Setuju', icon: CheckCircleIcon },
+  { value: 'STS', label: 'Sangat Tidak Setuju' },
+  { value: 'TS', label: 'Tidak Setuju' },
+  { value: 'S', label: 'Setuju' },
+  { value: 'SS', label: 'Sangat Setuju' },
 ] as const;
 
 const formatPeriode = (kdperiode: string) => {
@@ -270,7 +268,7 @@ export const KuesionerPage = () => {
 
                     {soal.jenisjwb === 'A' && (
                       <div className="grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">
-                        {LIKERT_OPTIONS.map(({ value, label, icon: OptionIcon }) => {
+                        {LIKERT_OPTIONS.map(({ value, label }) => {
                           const isSelected = jawabanState[soal.idpertanyaan] === value;
                           return (
                             <button
@@ -283,7 +281,6 @@ export const KuesionerPage = () => {
                                   : 'border-zinc-200 bg-white text-zinc-500 hover:border-amber-300 hover:text-zinc-700 dark:border-white/10 dark:bg-zinc-950/40 dark:text-zinc-400 dark:hover:border-amber-400/40 dark:hover:text-zinc-300'
                               }`}
                             >
-                              <OptionIcon size={20} weight={isSelected ? 'fill' : 'regular'} />
                               {label}
                             </button>
                           );
