@@ -132,7 +132,10 @@ export const KuesionerPage = () => {
   }
 
   const rawKelompokList = kuesionerData.kuesioner || [];
-  const kelompokList = filterKelompokByKategori(rawKelompokList, user);
+  const kelompokList = filterKelompokByKategori(rawKelompokList, user).map((k) => ({
+    ...k,
+    pertanyaan: [...k.pertanyaan].sort((a, b) => (a.jenisjwb === 'B' ? 1 : 0) - (b.jenisjwb === 'B' ? 1 : 0)),
+  }));
 
   const allPertanyaan = kelompokList.flatMap((k) => k.pertanyaan);
   const totalSoal = allPertanyaan.length;
@@ -194,7 +197,7 @@ export const KuesionerPage = () => {
         <header className="animate-fade-in mb-6 flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900">
           <div className="min-w-0">
             <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-3xl">
-              Kuesioner <span className="text-amber-500">Evaluasi</span>
+              Kuesioner <span className="text-amber-500">Kewidyamandalaan</span>
             </h1>
             <p className="mt-2 truncate text-sm text-zinc-500 dark:text-zinc-400">
               {user?.nama ? `Halo, ${user.nama} · ` : ''}Periode Aktif:{' '}
