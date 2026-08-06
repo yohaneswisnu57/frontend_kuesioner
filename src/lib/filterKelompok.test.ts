@@ -63,4 +63,18 @@ describe('filterKelompokByKategori', () => {
     const hasil = filterKelompokByKategori([kelompokRusak], user);
     expect(hasil).toEqual([]);
   });
+
+  it('kelompok "Kritik dan Saran" selalu ditaruh paling akhir, apa pun urutan dari API', () => {
+    const kritikSaran: Kelompok = { ...buildKelompok('K-KS', 'umum'), namakelompok: 'Kritik dan Saran' };
+    const daftarDenganKritikDiAwal = [kritikSaran, ...semuaKelompok];
+    const user = buildUser({ is_dosen: true });
+    const hasil = filterKelompokByKategori(daftarDenganKritikDiAwal, user);
+    expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-DOSEN', 'K-UMUM', 'K-KS']);
+  });
+
+  it('pencocokan kelompok "Kritik dan Saran" tidak case-sensitive', () => {
+    const kritikSaran: Kelompok = { ...buildKelompok('K-KS', 'umum'), namakelompok: 'KRITIK & SARAN' };
+    const hasil = filterKelompokByKategori([kritikSaran, ...semuaKelompok], buildUser());
+    expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-UMUM', 'K-KS']);
+  });
 });
