@@ -4,6 +4,7 @@ import {
   ArrowRightIcon,
   CheckCircleIcon,
   CheckIcon,
+  InfoIcon,
   SealWarningIcon,
   SignOutIcon,
   SpinnerGapIcon,
@@ -213,6 +214,59 @@ export const KuesionerPage = () => {
             </button>
           </div>
         </header>
+
+        <div className="animate-fade-in mb-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900 md:p-8">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400">
+              <InfoIcon size={18} weight="bold" />
+            </span>
+            <div className="min-w-0 space-y-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+              <p>
+                Kami memohon kesediaan Romo/Suster/Bapak/Ibu untuk meluangkan waktu dan mengisi Kuesioner Kewidyamandalaan Semester Genap
+                Tahun Ajaran 2025/2026.
+              </p>
+
+              <div>
+                <p>Kuesioner Kewidyamandalaan terdiri atas tiga jenis kuesioner, yaitu:</p>
+                <ol className="mt-1.5 list-decimal space-y-1 pl-5">
+                  <li>Kuesioner Kinerja Dosen;</li>
+                  <li>Kuesioner Kepuasan terhadap Layanan; dan</li>
+                  <li>Kuesioner Pemahaman Visi, Misi, Nilai Keutamaan, dan Patron Universitas.</li>
+                </ol>
+              </div>
+
+              <div>
+                <p>Dalam pelaksanaannya, Dosen dan Tenaga Kependidikan dimohon untuk mengisi dua jenis kuesioner, yaitu:</p>
+                <ol className="mt-1.5 list-decimal space-y-1 pl-5">
+                  <li>Kuesioner Kepuasan terhadap Layanan; dan</li>
+                  <li>Kuesioner Pemahaman Visi, Misi, Nilai Keutamaan, dan Patron Universitas.</li>
+                </ol>
+              </div>
+
+              <p>
+                Sementara itu, Kuesioner Kinerja Dosen secara khusus ditujukan kepada mahasiswa sebagai pengguna layanan pendidikan di
+                Universitas Katolik Widya Mandala Surabaya.
+              </p>
+
+              <p>
+                Kami mengharapkan Romo/Suster/Bapak/Ibu dapat mengisi kuesioner ini secara jujur, objektif, dan sesuai dengan pengalaman
+                serta kondisi yang dirasakan. Tidak ada jawaban benar atau salah. Setiap tanggapan yang diberikan merupakan masukan yang
+                berharga bagi evaluasi, pengembangan, dan peningkatan kualitas pelayanan di Universitas Katolik Widya Mandala Surabaya.
+              </p>
+
+              <p>
+                Kami juga mengharapkan pengisian kuesioner dilakukan secara sukarela dan tanpa adanya paksaan atau pengaruh dari pihak
+                lain, sehingga tanggapan yang diberikan dapat menggambarkan kondisi yang sesungguhnya.
+              </p>
+
+              <p>
+                Atas kesediaan, waktu, dan partisipasi Romo/Suster/Bapak/Ibu, kami menyampaikan terima kasih.
+                <br />
+                Salam Widya Mandala
+              </p>
+            </div>
+          </div>
+        </div>
 
         <div className="sticky top-4 z-40 mb-6 rounded-2xl border border-zinc-200 bg-white/95 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-900/95">
           <div className="mb-3 flex items-center justify-between gap-3 overflow-x-auto">
