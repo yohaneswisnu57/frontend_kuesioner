@@ -77,4 +77,32 @@ describe('filterKelompokByKategori', () => {
     const hasil = filterKelompokByKategori([kritikSaran, ...semuaKelompok], buildUser());
     expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-UMUM', 'K-KS']);
   });
+
+  it('kelompok diurutkan sesuai daftar prioritas, apa pun urutan dari API', () => {
+    const withNama = (kdkelompok: string, namakelompok: string): Kelompok => ({
+      ...buildKelompok(kdkelompok, 'umum'),
+      namakelompok,
+    });
+    const kritikSaran = withNama('K-KS', 'Kritik dan Saran');
+    const sarpras = withNama('K-6', 'Sarana Prasarana');
+    const pemahamanPatron = withNama('K-9', 'Pemahaman Patron Universitas');
+    const layananInstitusi = withNama('K-1', 'Layanan Pengelola Institusi');
+    const pemahamanNilai = withNama('K-8', 'Pemahaman Nilai Keutamaan');
+    const tidakDikenal = withNama('K-X', 'Kelompok Lain Yang Tidak Terdaftar');
+    const layananKepegawaian = withNama('K-2', 'Layanan Kepegawaian');
+
+    const daftarAcak = [
+      kritikSaran,
+      sarpras,
+      pemahamanPatron,
+      layananInstitusi,
+      tidakDikenal,
+      pemahamanNilai,
+      layananKepegawaian,
+    ];
+
+    const hasil = filterKelompokByKategori(daftarAcak, buildUser());
+
+    expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-1', 'K-2', 'K-6', 'K-8', 'K-9', 'K-X', 'K-KS']);
+  });
 });
