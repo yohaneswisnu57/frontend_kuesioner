@@ -215,6 +215,7 @@ export const KuesionerPage = () => {
           </div>
         </header>
 
+        {currentStep === 0 && (
         <div className="animate-fade-in mb-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900 md:p-8">
           <div className="flex items-start gap-3">
             <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400">
@@ -267,6 +268,7 @@ export const KuesionerPage = () => {
             </div>
           </div>
         </div>
+        )}
 
         <div className="sticky top-4 z-40 mb-6 rounded-2xl border border-zinc-200 bg-white/95 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-900/95">
           <div className="mb-3 flex items-center justify-between gap-3 overflow-x-auto">
