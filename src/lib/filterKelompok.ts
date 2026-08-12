@@ -5,6 +5,8 @@ const isKelompokKritikSaran = (namakelompok: string): boolean => {
   return nama.includes('kritik') && nama.includes('saran');
 };
 
+const normalisasiNamaKelompok = (nama: string): string => nama.trim().toLowerCase().replace(/\s+/g, ' ');
+
 const URUTAN_KELOMPOK_PRIORITAS = [
   'Layanan Pengelola Institusi',
   'Layanan Kepegawaian',
@@ -15,7 +17,7 @@ const URUTAN_KELOMPOK_PRIORITAS = [
   'Pemahaman Visi Misi',
   'Pemahaman Nilai Keutamaan',
   'Pemahaman Patron Universitas',
-];
+].map(normalisasiNamaKelompok);
 
 export const filterKelompokByKategori = (kelompokList: Kelompok[], user: User | null | undefined): Kelompok[] => {
   const hasil = kelompokList.filter((kelompok) => {
@@ -40,8 +42,8 @@ export const filterKelompokByKategori = (kelompokList: Kelompok[], user: User | 
   // Kelompok lain diurutkan sesuai URUTAN_KELOMPOK_PRIORITAS; yang tidak ada di daftar
   // tersebut tetap mempertahankan urutan relatifnya dan diletakkan setelah yang match.
   const utamaTerurut = [...utama].sort((a, b) => {
-    const indexA = URUTAN_KELOMPOK_PRIORITAS.indexOf(a.namakelompok);
-    const indexB = URUTAN_KELOMPOK_PRIORITAS.indexOf(b.namakelompok);
+    const indexA = URUTAN_KELOMPOK_PRIORITAS.indexOf(normalisasiNamaKelompok(a.namakelompok));
+    const indexB = URUTAN_KELOMPOK_PRIORITAS.indexOf(normalisasiNamaKelompok(b.namakelompok));
     const prioritasA = indexA === -1 ? Infinity : indexA;
     const prioritasB = indexB === -1 ? Infinity : indexB;
     return prioritasA - prioritasB;

@@ -105,4 +105,19 @@ describe('filterKelompokByKategori', () => {
 
     expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-1', 'K-2', 'K-6', 'K-8', 'K-9', 'K-X', 'K-KS']);
   });
+
+  it('pencocokan urutan prioritas tetap match meski beda spasi/kapitalisasi dari API', () => {
+    const withNama = (kdkelompok: string, namakelompok: string): Kelompok => ({
+      ...buildKelompok(kdkelompok, 'umum'),
+      namakelompok,
+    });
+
+    const layananKeamanan = withNama('K-3', '  layanan jaminan keamanan   dan kebersihan  ');
+    const sarpras = withNama('K-6', 'SARANA PRASARANA');
+    const layananInstitusi = withNama('K-1', 'Layanan Pengelola Institusi');
+
+    const hasil = filterKelompokByKategori([sarpras, layananKeamanan, layananInstitusi], buildUser());
+
+    expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-1', 'K-3', 'K-6']);
+  });
 });
