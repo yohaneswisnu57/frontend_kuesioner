@@ -2,10 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { filterKelompokByKategori } from './filterKelompok';
 import type { Kelompok, User } from '../types/kuesioner';
 
-const buildKelompok = (kdkelompok: string, kategori_pegawai: Kelompok['kategori_pegawai']): Kelompok => ({
+const buildKelompok = (
+  kdkelompok: string,
+  kategori_pegawai: Kelompok['kategori_pegawai'],
+  urutan = 0,
+): Kelompok => ({
   kdkelompok,
   namakelompok: `Kelompok ${kdkelompok}`,
   kategori_pegawai,
+  urutan,
   pertanyaan: [],
 });
 
@@ -78,46 +83,25 @@ describe('filterKelompokByKategori', () => {
     expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-UMUM', 'K-KS']);
   });
 
-  it('kelompok diurutkan sesuai daftar prioritas, apa pun urutan dari API', () => {
-    const withNama = (kdkelompok: string, namakelompok: string): Kelompok => ({
-      ...buildKelompok(kdkelompok, 'umum'),
-      namakelompok,
+  it('kelompok diurutkan sesuai kolom urutan dari backend, apa pun urutan kemunculan di array API', () => {
+    const withUrutan = (kdkelompok: string, urutan: number, namakelompok?: string): Kelompok => ({
+      ...buildKelompok(kdkelompok, 'umum', urutan),
+      ...(namakelompok ? { namakelompok } : {}),
     });
-    const kritikSaran = withNama('K-KS', 'Kritik dan Saran');
-    const sarpras = withNama('K-6', 'Sarana Prasarana');
-    const pemahamanPatron = withNama('K-9', 'Pemahaman Patron Universitas');
-    const layananInstitusi = withNama('K-1', 'Layanan Pengelola Institusi');
-    const pemahamanNilai = withNama('K-8', 'Pemahaman Nilai Keutamaan');
-    const tidakDikenal = withNama('K-X', 'Kelompok Lain Yang Tidak Terdaftar');
-    const layananKepegawaian = withNama('K-2', 'Layanan Kepegawaian');
 
-    const daftarAcak = [
-      kritikSaran,
-      sarpras,
-      pemahamanPatron,
-      layananInstitusi,
-      tidakDikenal,
-      pemahamanNilai,
-      layananKepegawaian,
-    ];
+    const kritikSaran = withUrutan('K-KS', 1, 'Kritik dan Saran');
+    const sarpras = withUrutan('K-6', 6);
+    const pemahamanPatron = withUrutan('K-9', 9);
+    const layananInstitusi = withUrutan('K-1', 1);
+    const pemahamanNilai = withUrutan('K-8', 8);
+    const layananKepegawaian = withUrutan('K-2', 2);
+
+    const daftarAcak = [kritikSaran, sarpras, pemahamanPatron, layananInstitusi, pemahamanNilai, layananKepegawaian];
 
     const hasil = filterKelompokByKategori(daftarAcak, buildUser());
 
-    expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-1', 'K-2', 'K-6', 'K-8', 'K-9', 'K-X', 'K-KS']);
-  });
-
-  it('pencocokan urutan prioritas tetap match meski beda spasi/kapitalisasi dari API', () => {
-    const withNama = (kdkelompok: string, namakelompok: string): Kelompok => ({
-      ...buildKelompok(kdkelompok, 'umum'),
-      namakelompok,
-    });
-
-    const layananKeamanan = withNama('K-3', '  layanan jaminan keamanan   dan kebersihan  ');
-    const sarpras = withNama('K-6', 'SARANA PRASARANA');
-    const layananInstitusi = withNama('K-1', 'Layanan Pengelola Institusi');
-
-    const hasil = filterKelompokByKategori([sarpras, layananKeamanan, layananInstitusi], buildUser());
-
-    expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-1', 'K-3', 'K-6']);
+    // Meski `urutan` kolomnya bertabrakan dengan grup lain (mis. K-KS = 1 sama seperti K-1),
+    // "Kritik dan Saran" tetap dipaksa ke akhir sebagai jaring pengaman.
+    expect(hasil.map((k) => k.kdkelompok)).toEqual(['K-1', 'K-2', 'K-6', 'K-8', 'K-9', 'K-KS']);
   });
 });

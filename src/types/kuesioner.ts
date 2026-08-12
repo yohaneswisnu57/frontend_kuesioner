@@ -26,6 +26,7 @@ export interface Kelompok {
   kdkelompok: string;
   namakelompok: string;
   kategori_pegawai: KategoriPegawai;
+  urutan: number;
   pertanyaan: Pertanyaan[];
 }
 

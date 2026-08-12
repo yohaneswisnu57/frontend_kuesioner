@@ -17,6 +17,7 @@ const kuesionerData: KuesionerData = {
       kdkelompok: 'K1',
       namakelompok: 'Kelompok Layanan',
       kategori_pegawai: 'umum',
+      urutan: 1,
       pertanyaan: [
         { idpertanyaan: 1, pertanyaan: 'Layanan cepat?', jenisjwb: 'A', kunci: '' },
         { idpertanyaan: 2, pertanyaan: 'Staf ramah?', jenisjwb: 'A', kunci: '' },
@@ -33,12 +34,14 @@ const multiKelompokData: KuesionerData = {
       kdkelompok: 'K1',
       namakelompok: 'Kelompok Layanan',
       kategori_pegawai: 'umum',
+      urutan: 1,
       pertanyaan: [{ idpertanyaan: 1, pertanyaan: 'Layanan cepat?', jenisjwb: 'A', kunci: '' }],
     },
     {
       kdkelompok: 'K2',
       namakelompok: 'Kelompok Fasilitas',
       kategori_pegawai: 'umum',
+      urutan: 2,
       pertanyaan: [{ idpertanyaan: 2, pertanyaan: 'Fasilitas memadai?', jenisjwb: 'A', kunci: '' }],
     },
   ],
