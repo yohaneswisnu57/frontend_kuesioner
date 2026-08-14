@@ -1,5 +1,5 @@
-import { createContext, useContext, type ReactNode } from 'react';
-import { getToken } from '../lib/api';
+import { createContext, useContext, useEffect, type ReactNode } from 'react';
+import { getToken, clearToken } from '../lib/api';
 import { useUser } from '../lib/hooks';
 import type { User } from '../types/kuesioner';
 
@@ -14,6 +14,18 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const hasToken = !!getToken();
   const { data: user, status } = useUser();
+
+  // The axios interceptor only clears the token on a clean 401. Any other
+  // rejection (403/422/500, network/CORS error) leaves a bad token sitting
+  // in storage while isAuthenticated is false — LoginPage then sees a token
+  // is present and bounces straight back to /kuesioner, which fails again
+  // and bounces back to /login, looping forever. Clear it here too so an
+  // invalid token can never survive a failed /user fetch.
+  useEffect(() => {
+    if (hasToken && status === 'error') {
+      clearToken();
+    }
+  }, [hasToken, status]);
 
   // status stays 'pending' until the query settles (success or error), so
   // this never has the isLoading/isFetching gap that causes a false
