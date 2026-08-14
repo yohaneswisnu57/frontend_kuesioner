@@ -6,6 +6,7 @@ import { RequireAuth } from './components/RequireAuth';
 import { LoginPage } from './pages/LoginPage';
 import { KuesionerPage } from './pages/KuesionerPage';
 import { SsoCallbackPage } from './pages/SsoCallbackPage';
+import { AdminLoginPage } from './pages/AdminLoginPage';
 import { RingkasanKelompokPage } from './pages/RingkasanKelompokPage';
 
 const queryClient = new QueryClient({
@@ -26,6 +27,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/callback" element={<SsoCallbackPage />} />
               <Route path="/sso/callback" element={<SsoCallbackPage />} />
+              <Route path="/admin-login" element={<AdminLoginPage />} />
               <Route
                 path="/kuesioner"
                 element={
