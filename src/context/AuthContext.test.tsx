@@ -57,4 +57,18 @@ describe('AuthProvider - token yang ditolak backend (mis. dari login-as)', () =>
     expect(ssoLink).toBeInTheDocument();
     expect(getToken()).toBeNull();
   });
+
+  it('membuang token saat GET /kuesioner/user sukses (200) tapi data usernya null', async () => {
+    // Axios hanya melempar error untuk status non-2xx. Kalau backend
+    // membalas 200 dengan `data: null` (mis. `{ success: false, data: null }`),
+    // react-query mencatatnya sebagai status 'success' dengan user null — bukan
+    // 'error' — jadi harus tetap dianggap gagal otentikasi.
+    vi.spyOn(apiClient, 'get').mockResolvedValue({ data: { success: false, data: null } });
+
+    renderApp();
+
+    const ssoLink = await screen.findByRole('link', { name: /masuk dengan sso/i });
+    expect(ssoLink).toBeInTheDocument();
+    expect(getToken()).toBeNull();
+  });
 });

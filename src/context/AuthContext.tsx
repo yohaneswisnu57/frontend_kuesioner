@@ -16,16 +16,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: user, status } = useUser();
 
   // The axios interceptor only clears the token on a clean 401. Any other
-  // rejection (403/422/500, network/CORS error) leaves a bad token sitting
-  // in storage while isAuthenticated is false — LoginPage then sees a token
-  // is present and bounces straight back to /kuesioner, which fails again
-  // and bounces back to /login, looping forever. Clear it here too so an
-  // invalid token can never survive a failed /user fetch.
+  // rejection (403/422/500, network/CORS error) — or even a 200 response
+  // whose body carries no usable user (e.g. `{ success: false }` with no
+  // `data`, which never makes axios throw) — leaves a bad token sitting in
+  // storage while isAuthenticated is false. LoginPage then sees a token is
+  // present and bounces straight back to /kuesioner, which fails again and
+  // bounces back to /login, looping forever. Clear it here too, for any
+  // settled (non-pending) query that didn't yield a user, so an invalid
+  // token can never survive a failed /user fetch.
   useEffect(() => {
-    if (hasToken && status === 'error') {
+    if (hasToken && status !== 'pending' && !user) {
       clearToken();
     }
-  }, [hasToken, status]);
+  }, [hasToken, status, user]);
 
   // status stays 'pending' until the query settles (success or error), so
   // this never has the isLoading/isFetching gap that causes a false
