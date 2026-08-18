@@ -348,11 +348,15 @@ export const KuesionerPage = () => {
                       <div className="max-w-2xl">
                         <textarea
                           rows={4}
+                          maxLength={5000}
                           placeholder="Ketik jawaban esai bebas Anda di sini..."
                           value={jawabanState[soal.idpertanyaan] || ''}
                           onChange={(e) => handlePilihJawaban(soal.idpertanyaan, e.target.value)}
                           className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-700 placeholder-zinc-400 transition-all focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 dark:border-white/10 dark:bg-zinc-950/60 dark:text-zinc-300 dark:placeholder-zinc-600"
                         />
+                        <p className="mt-1 text-right text-xs text-zinc-400 dark:text-zinc-600">
+                          {(jawabanState[soal.idpertanyaan]?.toString().length || 0)}/5000
+                        </p>
                       </div>
                     )}
                   </div>
