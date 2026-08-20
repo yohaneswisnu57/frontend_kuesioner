@@ -6,17 +6,34 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  message?: string;
 }
+
+const LAST_ERROR_KEY = 'simanja_last_error';
 
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false };
 
-  static getDerivedStateFromError(): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, message: error.message };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('Unhandled UI error:', error, info.componentStack);
+    try {
+      localStorage.setItem(
+        LAST_ERROR_KEY,
+        JSON.stringify({
+          message: error.message,
+          stack: error.stack,
+          componentStack: info.componentStack,
+          url: window.location.href,
+          time: new Date().toISOString(),
+        }),
+      );
+    } catch {
+      // localStorage unavailable (private mode, quota, etc.) — nothing to do.
+    }
   }
 
   handleReload = () => {
@@ -36,6 +53,9 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="mt-2 text-sm leading-relaxed text-slate-400">
               Maaf, terjadi kendala teknis pada aplikasi. Silakan coba muat ulang halaman.
             </p>
+            {this.state.message && (
+              <p className="mt-2 break-words text-xs text-slate-500">{this.state.message}</p>
+            )}
             <button
               onClick={this.handleReload}
               className="mt-6 min-h-[44px] rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-6 py-2 text-sm font-bold text-white transition-all hover:opacity-90"

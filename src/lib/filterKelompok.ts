@@ -1,7 +1,7 @@
 import type { Kelompok, User } from '../types/kuesioner';
 
-const isKelompokKritikSaran = (namakelompok: string): boolean => {
-  const nama = namakelompok.toLowerCase();
+const isKelompokKritikSaran = (namakelompok: string | null | undefined): boolean => {
+  const nama = (namakelompok ?? '').toLowerCase();
   return nama.includes('kritik') && nama.includes('saran');
 };
 

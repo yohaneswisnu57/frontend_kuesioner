@@ -38,7 +38,8 @@ apiClient.interceptors.response.use(
       clearToken();
       // Do not redirect if we are already on /login or /callback (SSO processing page)
       const currentPath = window.location.pathname;
-      if (currentPath !== '/login' && currentPath !== '/callback' && currentPath !== '/sso/callback') {
+      const exemptPaths = ['/login', '/callback', '/sso/callback', '/admin-login'];
+      if (!exemptPaths.includes(currentPath)) {
         window.location.href = '/login';
       }
     }

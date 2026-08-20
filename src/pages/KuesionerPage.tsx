@@ -133,7 +133,7 @@ export const KuesionerPage = () => {
   const rawKelompokList = kuesionerData.kuesioner || [];
   const kelompokList = filterKelompokByKategori(rawKelompokList, user).map((k) => ({
     ...k,
-    pertanyaan: [...k.pertanyaan].sort((a, b) => (a.jenisjwb === 'B' ? 1 : 0) - (b.jenisjwb === 'B' ? 1 : 0)),
+    pertanyaan: [...(k.pertanyaan ?? [])].sort((a, b) => (a.jenisjwb === 'B' ? 1 : 0) - (b.jenisjwb === 'B' ? 1 : 0)),
   }));
 
   const allPertanyaan = kelompokList.flatMap((k) => k.pertanyaan);
@@ -319,7 +319,7 @@ export const KuesionerPage = () => {
                       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-amber-500 text-xs font-bold text-amber-600 dark:text-amber-400">
                         {index + 1}
                       </span>
-                      {soal.pertanyaan}
+                      {typeof soal.pertanyaan === 'string' ? soal.pertanyaan : String(soal.pertanyaan ?? '')}
                     </p>
 
                     {soal.jenisjwb === 'A' && (
